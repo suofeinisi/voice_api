@@ -2,5 +2,6 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'WECHAT' => require 'wechat.php',
+    'wechatConfig' => require 'wechat.php',
+    'wechatMiniProgramConfig' => require 'mini_program.php',
 ];
