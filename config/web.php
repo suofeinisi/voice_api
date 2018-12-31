@@ -79,6 +79,7 @@ $config = [
             ],
         ],
         'db' => $db,
+        'redis' => require __DIR__ . '/redis.php',
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
