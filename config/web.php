@@ -2,7 +2,6 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
-$easywechat =
 
 $config = [
     'id' => 'basic',
