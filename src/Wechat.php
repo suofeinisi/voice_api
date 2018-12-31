@@ -15,8 +15,13 @@ class Wechat
     {
         if(!$token = \Yii::$app->redis->get(self::$REDIS_ACCESS_TOKEN)){
             $accessToken = \Yii::$app->wechat->miniProgram->access_token;
-            $token = $accessToken->getToken();
-            \Yii::$app->redis->set(self::$REDIS_ACCESS_TOKEN, 3600*2);
+            $tokenArr = $accessToken->getToken();
+            if(!isset($tokenArr['access_token']) || !isset($tokenArr['expires_in'])){
+                return false;
+            }
+            $token = $tokenArr['access_token'];
+            \Yii::$app->redis->setex(self::$REDIS_ACCESS_TOKEN, $tokenArr['expires_in'], $token);
+
         }
         return $token;
 
