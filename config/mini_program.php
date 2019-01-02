@@ -11,9 +11,4 @@ return [
     'secret' => '490ef912b44f189de084bfe9de1ba5db',
     'token' => 'TestToken',
     'response_type' => 'array',
-    'oauth' => [
-        'scopes' => ['snsapi_base'],
-        'callback' => '/wx/callback',
-    ],
-
 ];

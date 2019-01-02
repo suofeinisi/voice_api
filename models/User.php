@@ -9,7 +9,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 
     public static function tableName()
     {
-        return 'user';
+        return 'wx_user';
     }
 
     /**
@@ -29,6 +29,20 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public static function findByUsername($username)
     {
         return static::findOne(['username'=>$username]);
+    }
+
+    /**
+     * @param $openid
+     * @return User
+     */
+    public static function findByOpenid($openid)
+    {
+        return static::findOne(['openid'=>$openid]);
+    }
+
+    public static function openidExists($openid)
+    {
+        return self::find()->where(['openid'=>$openid])->exists();
     }
 
     /**
@@ -74,11 +88,18 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return $this->password === $password;
     }
 
+    /**
+     * 保存前
+     * @param bool $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     */
     public function beforeSave($insert)
     {
         if(parent::beforeSave($insert)){
+            $this->update_at = time();
             if($this->isNewRecord){
-                $this->auth_key = \Yii::$app->security->generateRandomString();
+                $this->create_at = time();
             }
             return true;
         }

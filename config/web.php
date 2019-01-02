@@ -2,7 +2,6 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
-$easywechat =
 
 $config = [
     'id' => 'basic',
@@ -80,6 +79,7 @@ $config = [
             ],
         ],
         'db' => $db,
+        'redis' => require __DIR__ . '/redis.php',
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
