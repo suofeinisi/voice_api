@@ -15,4 +15,8 @@ return [
     -3 => 'param error',
     -4 => '频繁请求',
 
+    100001 => 'not wechat',
+    100002 => 'rd_session expired',
+    100003 => 'get wx user error'
+
 ];

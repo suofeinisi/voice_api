@@ -96,13 +96,14 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function beforeSave($insert)
     {
-        if(parent::beforeSave($insert)){
-            $this->update_at = time();
-            if($this->isNewRecord){
-                $this->create_at = time();
-            }
-            return true;
+        if(!parent::beforeSave($insert)){
+            return false;
         }
-        return false;
+
+        $this->update_at = time();
+        if($this->isNewRecord){
+            $this->create_at = time();
+        }
+        return true;
     }
 }

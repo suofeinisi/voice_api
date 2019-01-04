@@ -11,9 +11,21 @@ namespace app\controllers;
 
 use app\models\User;
 use app\src\Wechat;
+use BaseModule;
 
-class WechatController extends BaseController
+class WechatController
 {
+    public function actionTest()
+    {
+        var_dump(Wechat::getAccessToken());die;
+    }
+
+    /**
+     * @desc 登陆拿session_key和openid
+     * @author lijiaxu
+     * @date 2019/1/2
+     * @return array
+     */
     public function actionSignin()
     {
         try{
@@ -26,28 +38,39 @@ class WechatController extends BaseController
             if(isset($wxSession['errcode'])){
                 throw new \Exception($wxSession['errmsg'], $wxSession['errcode']);
             }
-
-            $wxSession = '{"session_key":"JLzDaybIEysf3Jo82uh0Ww==","openid":"owEzy5K5pTSvSEmMjOcKJ04m6vIo"}';
-            $wxSession = json_decode($wxSession, true);
-
-            $userInfo = \Yii::$app->wechat->getApp();
-
-            if(!User::openidExists($wxSession['openid'])){
-                $userModel = new User();
-                $userModel->username = 'wechat_user_' . (User::find()->max('id')+1);
-                $userModel->openid = $wxSession['openid'];
-                $userModel->save();
+            $rd_session = \Yii::$app->getSecurity()->generateRandomString(168);
+            \Yii::$app->redis->setex($rd_session, 3600*24*2, json_encode($wxSession));
+            if($old_session = User::find()->select(['rd_session'])->where(['openid'=>$wxSession['openid']])->scalar()){
+                \Yii::$app->redis->del($old_session);//删掉失效的rd_session
             }
-            return $this->success(1);
-
+            BaseModule::success(1,['rd_session'=>$rd_session]);
         }catch (\Exception $ex){
-            return $this->error($ex->getCode(), $ex->getMessage());
+            BaseModule::error($ex->getCode(), $ex->getMessage());
         }
     }
 
-    public function actionTest()
+    /**
+     * @desc 把前端传过来的用户信息验证并存储
+     * @author lijiaxu
+     * @date 2019/1/3
+     * @return array|int
+     */
+    public function actionSetUserInfo()
     {
-        var_dump(Wechat::getAccessToken());die;
+        try{
+            $post = \Yii::$app->request->post();
+            if(!isset($post['iv']) || !isset($post['encryptData'])){
+                return -1;
+            }
+            $result = Wechat::setUserInfo($post['iv'], $post['encryptData']);
+            if($result === true){
+                BaseModule::success();
+            }else{
+                throw new \Exception('', $result);
+            }
+        }catch (\Exception $exception){
+            BaseModule::error($exception->getCode(), $exception->getMessage());
+        }
     }
 
     public function actionCallback()
