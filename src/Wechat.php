@@ -36,10 +36,9 @@ class Wechat
         if(!$rd_session || !$openid = \Yii::$app->redis->get($rd_session)){
             return -2;
         }
-        if (!$session_data = \Yii::$app->redis->get($rd_session)) {
+        if (!$session_data = @json_decode(\Yii::$app->redis->get($rd_session), true)) {
             return 100002;
         }
-        $miniProgram = \Yii::$app->wechat->miniProgram;
         $decryptedData = \Yii::$app->wechat->miniProgram->encryptor->decryptData($session_data['session_key'], $iv, $encryptData);
 
         if (!$decryptedData) {
