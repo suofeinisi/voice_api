@@ -17,8 +17,8 @@ class BaseController extends Controller
 {
     public function beforeAction($action)
     {
-        $rd_session = \Yii::$app->request->post('rd_session');
-        if(!$rd_session || !$openid = \Yii::$app->redis->get($rd_session)){
+        User::$_RD_SESSION = \Yii::$app->request->post('rd_session');
+        if(!User::$_RD_SESSION || !$openid = \Yii::$app->redis->get(User::$_RD_SESSION)){
             BaseModule::error(-2);
         }
         if(!User::find()->where(['openid'=>$openid])->exists()){

@@ -13,6 +13,6 @@ class StoryController extends BaseController
 {
     public function actionPublish()
     {
-        $file = $_FILES['file']
+        $file = $_FILES['file'];
     }
 }
