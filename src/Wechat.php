@@ -33,6 +33,9 @@ class Wechat
     public static function setUserInfo($iv, $encryptData)
     {
         $rd_session = \Yii::$app->request->headers->get('rd_session');
+        if(!$rd_session || !$openid = \Yii::$app->redis->get($rd_session)){
+            return -2;
+        }
         if (!$session_data = \Yii::$app->redis->get($rd_session)) {
             return 100002;
         }
