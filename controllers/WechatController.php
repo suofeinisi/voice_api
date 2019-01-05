@@ -16,6 +16,7 @@ use yii\web\Controller;
 
 class WechatController extends Controller
 {
+    public $enableCsrfValidation=false;
     public function actionTest()
     {
         var_dump(Wechat::getAccessToken());die;
