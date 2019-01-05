@@ -42,7 +42,7 @@ class WechatController extends Controller
             }
             $rd_session = \Yii::$app->getSecurity()->generateRandomString(168);
             \Yii::$app->redis->setex($rd_session, 3600*24*2, json_encode($wxSession));
-            if($old_session = User::find()->select(['rd_session'])->where(['openid'=>$wxSession['openid']])->scalar()){
+            if($old_session = User::find()->select(['rd_session'])->where(['openId'=>$wxSession['openid']])->scalar()){
                 \Yii::$app->redis->del($old_session);//删掉失效的rd_session
             }
             BaseModule::success(200,['rd_session'=>$rd_session]);

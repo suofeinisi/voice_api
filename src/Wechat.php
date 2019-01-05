@@ -39,20 +39,21 @@ class Wechat
         if (!$session_data = \Yii::$app->redis->get($rd_session)) {
             return 100002;
         }
+        $miniProgram = \Yii::$app->wechat->miniProgram;
         $decryptedData = \Yii::$app->wechat->miniProgram->encryptor->decryptData($session_data['session_key'], $iv, $encryptData);
 
         if (!$decryptedData) {
             return 0;
         }
-        if (User::find()->where(['openid' => $decryptedData['openid']])->exists()) {
+        if (User::find()->where(['openid' => $decryptedData['openId']])->exists()) {
             $userModel = User::find()->where(['openid' => $decryptedData['openid']])->one();
         } else {
             $userModel = new User();
         }
-        $userModel->openid = $decryptedData['openid'];
+        $userModel->openid = $decryptedData['openId'];
         $userModel->rd_session = $rd_session;
-        $userModel->nickname = $decryptedData['nickname'];
-        $userModel->gender = $decryptedData['gender'] == '男' ? 2 : 1;
+        $userModel->nickname = $decryptedData['nickName'];
+        $userModel->gender = $decryptedData['gender'];
         $userModel->city = $decryptedData['city'];
         $userModel->province = $decryptedData['province'];
         $userModel->country = $decryptedData['country'];
