@@ -62,7 +62,7 @@ class WechatController extends Controller
         try{
             $post = \Yii::$app->request->post();
             if(!isset($post['iv']) || !isset($post['encryptData'])){
-                return -1;
+                BaseModule::error(-1);
             }
             $result = Wechat::setUserInfo($post['iv'], $post['encryptData']);
             if($result === true){
