@@ -18,7 +18,7 @@ class BaseController extends Controller
     public function beforeAction($action)
     {
         User::$_RD_SESSION = \Yii::$app->request->post('rd_session');
-        if(!User::$_RD_SESSION || !User::$_OPENID = \Yii::$app->redis->get(User::$_RD_SESSION)){
+        if(!User::$_RD_SESSION || !User::$_OPENID = @json_decode(\Yii::$app->redis->get(User::$_RD_SESSION),true)['openid']){
             BaseModule::error(-2);
         }
         file_put_contents('/tmp/test.log', json_encode(User::$_OPENID). "\n", FILE_APPEND);
