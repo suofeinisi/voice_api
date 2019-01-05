@@ -9,10 +9,21 @@
 namespace app\controllers;
 
 
+use app\models\User;
+use app\module\BaseModule;
+use app\src\UploadForm;
+
 class StoryController extends BaseController
 {
+    //ext = aac
     public function actionPublish()
     {
-        $file = $_FILES['file'];
+        $post = \Yii::$app->request->post();
+        $during = $post['during'];
+        if(UploadForm::upload($during)){
+            BaseModule::success();
+        }else{
+            BaseModule::error();
+        }
     }
 }

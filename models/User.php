@@ -8,6 +8,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
 
     public static $_RD_SESSION = null;
+    public static $_OPENID = null;
 
     public static function tableName()
     {
