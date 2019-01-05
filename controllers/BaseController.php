@@ -21,6 +21,7 @@ class BaseController extends Controller
         if(!User::$_RD_SESSION || !User::$_OPENID = \Yii::$app->redis->get(User::$_RD_SESSION)){
             BaseModule::error(-2);
         }
+        file_put_contents('/tmp/test.log', json_encode(User::$_OPENID). "\n", FILE_APPEND);
         if(!User::find()->where(['openid'=>User::$_OPENID])->exists()){
             BaseModule::error(100003);
         }

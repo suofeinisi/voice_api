@@ -9,6 +9,9 @@
 namespace app\controllers;
 
 
+use app\models\Story;
+use app\models\StoryReply;
+use app\models\User;
 use app\module\BaseModule;
 use app\src\UploadForm;
 
@@ -19,10 +22,38 @@ class StoryController extends BaseController
     {
         $post = \Yii::$app->request->post();
         $during = $post['during'];
-        if(UploadForm::upload($during)){
+        if($name = UploadForm::upload($during)){
+            $storyModel = new Story();
+            $storyModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
+            $storyModel->entity = $name;
+            $storyModel->during = $during;
+            $storyModel->save();
             BaseModule::success();
         }else{
             BaseModule::error();
         }
+    }
+
+    public function actionReply()
+    {
+        $post = \Yii::$app->request->post();
+        $during = $post['during'];
+        $story_id = $post['story_id'];
+        if($name = UploadForm::upload($during)){
+            $replayModel = new StoryReply();
+            $replayModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
+            $replayModel->story_id = $story_id;
+            $replayModel->entity = $name;
+            $replayModel->during = $during;
+            $replayModel->save();
+            BaseModule::success();
+        }else{
+            BaseModule::success();
+        }
+    }
+
+    public function actionPublishList()
+    {
+        $publish = Story::find()->select(['id','user_id','']);
     }
 }

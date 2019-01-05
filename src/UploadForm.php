@@ -25,12 +25,7 @@ class UploadForm extends Model
         $target_entity = $target_path . $name;
         if(!file_exists($target_entity) && move_uploaded_file($fileInfo['tmp_name'], $target_entity)) {
             //上传成功,可进行进一步操作,将路径写入数据库等.
-            $storyModel = new Story();
-            $storyModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
-            $storyModel->entity = $name;
-            $storyModel->during = $during;
-            $storyModel->save();
-            return true;
+            return $name;
         }else{
             return false;
         }
