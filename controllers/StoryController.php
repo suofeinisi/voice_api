@@ -17,21 +17,26 @@ use app\src\UploadForm;
 
 class StoryController extends BaseController
 {
-    public $enableCsrfValidation=false;
+    public $enableCsrfValidation = false;
+
     //ext = aac
     public function actionPublish()
     {
-        $post = \Yii::$app->request->post();
-        $during = $post['during'];
-        if($name = UploadForm::upload()){
-            $storyModel = new Story();
-            $storyModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
-            $storyModel->entity = $name;
-            $storyModel->during = $during;
-            $storyModel->save();
-            BaseModule::success();
-        }else{
-            BaseModule::error();
+        try {
+            $post = \Yii::$app->request->post();
+            $during = $post['during'];
+            if ($name = UploadForm::upload()) {
+                $storyModel = new Story();
+                $storyModel->user_id = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
+                $storyModel->entity = $name;
+                $storyModel->during = $during;
+                $storyModel->save();
+                BaseModule::success();
+            } else {
+                BaseModule::error();
+            }
+        } catch (\Exception $ex) {
+            BaseModule::error($ex->getCode(), $ex->getMessage());
         }
     }
 
@@ -40,21 +45,21 @@ class StoryController extends BaseController
         $post = \Yii::$app->request->post();
         $during = $post['during'];
         $story_id = $post['story_id'];
-        if($name = UploadForm::upload()){
+        if ($name = UploadForm::upload()) {
             $replayModel = new StoryReply();
-            $replayModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
+            $replayModel->user_id = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
             $replayModel->story_id = $story_id;
             $replayModel->entity = $name;
             $replayModel->during = $during;
             $replayModel->save();
             BaseModule::success();
-        }else{
+        } else {
             BaseModule::success();
         }
     }
 
     public function actionPublishList()
     {
-        $publish = Story::find()->select(['id','user_id','']);
+        $publish = Story::find()->select(['id', 'user_id', '']);
     }
 }
