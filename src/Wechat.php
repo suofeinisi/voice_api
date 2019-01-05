@@ -32,7 +32,7 @@ class Wechat
 
     public static function setUserInfo($iv, $encryptData)
     {
-        $rd_session = \Yii::$app->request->post('rd_session');
+        $rd_session = \Yii::$app->request->headers->get('rd_session');
         if (!$session_data = \Yii::$app->redis->get($rd_session)) {
             return 100002;
         }
