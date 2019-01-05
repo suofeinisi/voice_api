@@ -17,12 +17,13 @@ use app\src\UploadForm;
 
 class StoryController extends BaseController
 {
+    public $enableCsrfValidation=false;
     //ext = aac
     public function actionPublish()
     {
         $post = \Yii::$app->request->post();
         $during = $post['during'];
-        if($name = UploadForm::upload($during)){
+        if($name = UploadForm::upload()){
             $storyModel = new Story();
             $storyModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
             $storyModel->entity = $name;
@@ -39,7 +40,7 @@ class StoryController extends BaseController
         $post = \Yii::$app->request->post();
         $during = $post['during'];
         $story_id = $post['story_id'];
-        if($name = UploadForm::upload($during)){
+        if($name = UploadForm::upload()){
             $replayModel = new StoryReply();
             $replayModel->user_id = User::find()->select(['id'])->where(['openid'=>User::$_OPENID])->scalar();
             $replayModel->story_id = $story_id;
