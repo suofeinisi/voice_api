@@ -44,7 +44,7 @@ class BaseModule extends \yii\base\Module
     {
         $resp = \Yii::$app->getResponse();
         $resp->format = \yii\web\Response::FORMAT_JSON;
-        if($code == 1){
+        if($code == 200){
             $resp->content = json_encode(['code'=>$code, 'data'=>$data], JSON_UNESCAPED_UNICODE);
         }else{
             $resp->content = json_encode(['code'=>$code, 'msg' => (string)$msg], JSON_UNESCAPED_UNICODE);
