@@ -45,7 +45,7 @@ class Wechat
             return 0;
         }
         if (User::find()->where(['openid' => $decryptedData['openId']])->exists()) {
-            $userModel = User::find()->where(['openid' => $decryptedData['openid']])->one();
+            $userModel = User::find()->where(['openid' => $decryptedData['openId']])->one();
         } else {
             $userModel = new User();
         }
