@@ -9,7 +9,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 
     public static function tableName()
     {
-        return 'wx_user';
+        return 'user';
     }
 
     /**
