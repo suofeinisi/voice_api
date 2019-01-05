@@ -11,7 +11,7 @@ namespace app\controllers;
 
 use app\models\User;
 use app\src\Wechat;
-use BaseModule;
+use app\module\BaseModule;
 use yii\web\Controller;
 
 class WechatController extends Controller

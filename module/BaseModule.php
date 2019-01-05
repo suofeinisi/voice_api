@@ -6,6 +6,8 @@
  * Time: 15:07
  */
 
+namespace app\module;
+
 class BaseModule extends \yii\base\Module
 {
     /**
