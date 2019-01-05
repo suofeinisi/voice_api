@@ -9,7 +9,6 @@
 namespace app\controllers;
 
 
-use app\models\User;
 use app\module\BaseModule;
 use app\src\UploadForm;
 

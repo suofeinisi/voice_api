@@ -16,5 +16,22 @@ class Story extends BaseModel
         return 'story';
     }
 
+    /**
+     * 保存前
+     * @param bool $insert
+     * @return bool
+     * @throws \yii\base\Exception
+     */
+    public function beforeSave($insert)
+    {
+        if(!parent::beforeSave($insert)){
+            return false;
+        }
 
+        $this->update_at = time();
+        if($this->isNewRecord){
+            $this->create_at = time();
+        }
+        return true;
+    }
 }
