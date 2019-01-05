@@ -17,9 +17,6 @@ class BaseController extends Controller
 {
     public function beforeAction($action)
     {
-        if(!\Yii::$app->wechat->getIsWechat()){
-            BaseModule::error(100001);
-        }
         $rd_session = \Yii::$app->request->headers->get('rd_session');
         if(!$rd_session || !$openid = \Yii::$app->redis->get($rd_session)){
             BaseModule::error(-2);
