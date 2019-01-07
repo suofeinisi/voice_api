@@ -17,6 +17,9 @@ class BaseController extends Controller
 {
     public function beforeAction($action)
     {
+
+        var_dump(\Yii::$app->request->headers->get('test'));
+        die;
         User::$_RD_SESSION = \Yii::$app->request->post('rd_session');
         if(!User::$_RD_SESSION || !User::$_OPENID = @json_decode(\Yii::$app->redis->get(User::$_RD_SESSION),true)['openid']){
             BaseModule::error(-2);

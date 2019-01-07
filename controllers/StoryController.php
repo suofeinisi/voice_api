@@ -19,6 +19,15 @@ class StoryController extends BaseController
 {
     public $enableCsrfValidation = false;
 
+    public function actionTest()
+    {
+        BaseModule::error(0, "['aa'=>123,'bb'=>234]");
+        BaseModule::success(200, [
+            'aa'=>123,
+            'bb'=>234,
+        ]);
+    }
+
     //ext = aac
     public function actionPublish()
     {
