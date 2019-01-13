@@ -92,8 +92,10 @@ class StoryController extends BaseController
             $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'type'=>1])
                 ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
             BaseModule::success(200,array_map(function ($row){
+                $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
-                $row['parter'] = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, -1);
+//                $row['parter'] = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, -1);
+                $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column();
                 return $row;
             }, $storys));
         }catch (\Exception $ex){
