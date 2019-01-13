@@ -95,7 +95,7 @@ class StoryController extends BaseController
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
 //                $row['parter'] = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, -1);
-                $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column();
+                $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
             }, $storys));
         }catch (\Exception $ex){
