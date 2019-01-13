@@ -97,8 +97,9 @@ class StoryController extends BaseController
             if(!$storyId){
                 throw new \Exception('', -1);
             }
-            $joinUid = StoryReply::find()->select(['user_id'])->where(['story_id'=>$storyId])->orderBy(['create_at'=>SORT_DESC])->indexBy('user_id')->limit(10)->all();
-            var_dump($joinUid);die;
+            $joinUid = StoryReply::find()->select(['user_id'])->where(['story_id'=>$storyId])->orderBy(['create_at'=>SORT_DESC])->indexBy('user_id')->limit(10)->asArray()->all();
+            $userInfo = User::find()->select(['avatarUrl'])->where(['in', 'id', array_keys($joinUid)])->asArray()->column();
+            BaseModule::success(200, $userInfo);
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
