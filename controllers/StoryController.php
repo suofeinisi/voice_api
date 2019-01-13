@@ -19,6 +19,10 @@ class StoryController extends BaseController
 {
     public $enableCsrfValidation = false;
 
+    public static $REDIS_PUBLISH_PATER = 'REDIS_PUBLISH_PATER';//存储故事参与者id
+
+    public static $REDIS_USER_REPLY = 'REDIS_USER_REPLY';//存储用户参与的故事id
+
     public function actionTest()
     {
         BaseModule::error(0, "['aa'=>123,'bb'=>234]");
@@ -58,15 +62,18 @@ class StoryController extends BaseController
                 throw new \Exception('', -1);
             }
             if ($name = UploadForm::upload()) {
+                $uid = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
                 $replayModel = new StoryReply();
-                $replayModel->user_id = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
+                $replayModel->user_id = $uid;
                 $replayModel->story_id = $story_id;
                 $replayModel->entity = $name;
                 $replayModel->during = $during;
                 $replayModel->save();
+                \Yii::$app->redis->zadd(self::$REDIS_PUBLISH_PATER.':'.$story_id, time(), $uid);
+                \Yii::$app->redis->zadd(self::$REDIS_USER_REPLY.':'.$uid, time(), $story_id);
                 BaseModule::success();
             } else {
-                BaseModule::success();
+                BaseModule::error();
             }
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
@@ -79,8 +86,26 @@ class StoryController extends BaseController
     public function actionPublishList()
     {
         try{
+            $offset = \Yii::$app->request->post('offset', 0);
+            $limit = \Yii::$app->request->post('limit', 5);
             $uInfo = User::findByRdSession();
-            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'type'=>1])->orderBy(['create_at'=>SORT_DESC])->asArray()->all();
+            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'type'=>1])
+                ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
+            BaseModule::success(200,array_map(function ($row){
+                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                $row['parter'] = \Yii::$app->redis->ZREVRANGEBYSCORE(self::$REDIS_PUBLISH_PATER.':'.$row['id']);
+                return $row;
+            }, $storys));
+        }catch (\Exception $ex){
+            BaseModule::error($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function actionReplyList()
+    {
+        try{
+            $uInfo = User::findByRdSession();
+            $storys = StoryReply::find()->select(['story_id id','']);
             BaseModule::success(200,array_map(function ($row){
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
                 return $row;
@@ -100,21 +125,19 @@ class StoryController extends BaseController
             if(!$storyId){
                 throw new \Exception('', -1);
             }
+            $uId = User::find()->select(['id'])->where(['rdSession'=>User::$_RD_SESSION])->scalar();
             $joinUid = StoryReply::find()->select(['user_id'])->where(['story_id'=>$storyId])->orderBy(['create_at'=>SORT_DESC])->indexBy('user_id')->limit(10)->asArray()->all();
-            $userInfo = User::find()->select(['avatarUrl'])->where(['in', 'id', array_keys($joinUid)])->asArray()->column();
+            foreach ($joinUid as $key => $value){
+                if($value == $uId){
+                    unset($joinUid[$key]);
+                }
+            }
+            $userInfo = [];
+            if($joinUid){
+                $userInfo = User::find()->select(['avatarUrl'])->where(['in', 'id', array_keys($joinUid)])->asArray()->column();
+            }
             BaseModule::success(200, $userInfo);
         }catch (\Exception $ex){
-            BaseModule::error($ex->getCode(), $ex->getMessage());
-        }
-    }
-
-    public function actionReplyList()
-    {
-        try{
-            $uInfo = User::findByRdSession();
-            $storys = StoryReply::find()->select(['story_id','']);
-        }catch (\Exception $ex)
-        {
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
     }
