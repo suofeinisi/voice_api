@@ -93,7 +93,7 @@ class StoryController extends BaseController
                 ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
             BaseModule::success(200,array_map(function ($row){
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
-                $row['parter'] = \Yii::$app->redis->ZREVRANGEBYSCORE(self::$REDIS_PUBLISH_PATER.':'.$row['id']);
+                $row['parter'] = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, -1);
                 return $row;
             }, $storys));
         }catch (\Exception $ex){
