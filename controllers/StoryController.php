@@ -53,8 +53,8 @@ class StoryController extends BaseController
     {
         try{
             $post = \Yii::$app->request->post();
-            $during = $post['during'];
-            $story_id = $post['story_id'];
+            $during = $post['during'] ?: 0;
+            $story_id = $post['storyId'] ?: 0;
             if(!$during || !$story_id){
                 throw new \Exception('', -1);
             }
@@ -74,8 +74,35 @@ class StoryController extends BaseController
         }
     }
 
+    /**
+     * 我发起的列表
+     */
     public function actionPublishList()
     {
-        $publish = Story::find()->select(['id', 'user_id', '']);
+        try{
+            $uInfo = User::findByRdSession();
+            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id']])->orderBy(['create_at'=>SORT_DESC])->asArray()->all();
+            BaseModule::success(200,$storys);
+        }catch (\Exception $ex){
+            BaseModule::error($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function actionPublishRow()
+    {
+        try{
+            $post = \Yii::$app->request->post();
+            $story_id = $post['storyId'] ?: 0;
+            $model = Story::find()->select(['user_id','entity','during']);
+            if($story_id){
+                $model = $model->where(['id'=>$story_id, 'status'=>1]);
+            }else{
+                $model = $model->where(['type'=>3,'status'=>1]);
+            }
+            $data = $model->asArray()->one();
+            BaseModule::success(200, $data);
+        }catch(\Exception $ex){
+            BaseModule::error($ex->getCode(), $ex->getMessage());
+        }
     }
 }

@@ -23,15 +23,9 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return static::findOne($id);
     }
 
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
+    public static function findByRdSession()
     {
-        return static::findOne(['username'=>$username]);
+        return static::findOne(['rdSession'=>self::$_RD_SESSION]);
     }
 
     /**
