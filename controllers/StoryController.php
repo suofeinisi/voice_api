@@ -87,6 +87,34 @@ class StoryController extends BaseController
         }
     }
 
+    /**
+     * 封面参与者列表
+     */
+    public function actionJoinUser()
+    {
+        try{
+            $storyId = \Yii::$app->request->post('storyId', 0);
+            if(!$storyId){
+                throw new \Exception('', -1);
+            }
+            $joinUid = StoryReply::find()->select(['user_id'])->where(['story_id'=>$storyId])->orderBy(['create_at'=>SORT_DESC])->indexBy('user_id')->limit(10)->all();
+            var_dump($joinUid);die;
+        }catch (\Exception $ex){
+            BaseModule::error($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function actionReplyList()
+    {
+        try{
+            $uInfo = User::findByRdSession();
+            $storys = StoryReply::find()->select(['story_id','']);
+        }catch (\Exception $ex)
+        {
+            BaseModule::error($ex->getCode(), $ex->getMessage());
+        }
+    }
+
     public function actionPublishRow()
     {
         try{

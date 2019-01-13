@@ -37,7 +37,6 @@ class BaseModule extends \yii\base\Module
         $codeMessage = \Yii::$app->params['messageCode'];
         $msg = $msg ?: (isset($codeMessage[$code]) ?$codeMessage[$code]:'');
         self::repsJson([], $msg, $code);
-//        return ['code'=>$code, 'msg'=>$msg];
     }
 
     private static function repsJson($data, $msg, $code)
