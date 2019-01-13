@@ -90,7 +90,7 @@ class StoryController extends BaseController
     /**
      * 封面参与者列表
      */
-    public function actionJoinUser()
+    public function actionParter()
     {
         try{
             $storyId = \Yii::$app->request->post('storyId', 0);
