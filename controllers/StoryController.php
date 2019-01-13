@@ -89,7 +89,7 @@ class StoryController extends BaseController
             $offset = \Yii::$app->request->post('offset', 0);
             $limit = \Yii::$app->request->post('limit', 5);
             $uInfo = User::findByRdSession();
-            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'type'=>1])
+            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'status'=>1])
                 ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
             BaseModule::success(200,array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
@@ -106,10 +106,16 @@ class StoryController extends BaseController
     public function actionReplyList()
     {
         try{
+            $offset = \Yii::$app->request->post('offset', 0);
+            $limit = \Yii::$app->request->post('limit', 5);
             $uInfo = User::findByRdSession();
-            $storys = StoryReply::find()->select(['story_id id','']);
+            $storyids = \Yii::$app->redis->ZREVRANGE(self::$REDIS_USER_REPLY.':'.$uInfo['id'],$offset,$limit);
+            $storys = $storyids ? Story::find()->select(['id','create_at','type'])->where(['and',['in','id',$storyids], ['status'=>1]])
+                ->orderBy(['create_at'=>SORT_DESC])->asArray()->all() : [];
             BaseModule::success(200,array_map(function ($row){
+                $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
             }, $storys));
         }catch (\Exception $ex){
@@ -117,32 +123,6 @@ class StoryController extends BaseController
         }
     }
 
-    /**
-     * 封面参与者列表
-     */
-    public function actionParter()
-    {
-        try{
-            $storyId = \Yii::$app->request->post('storyId', 0);
-            if(!$storyId){
-                throw new \Exception('', -1);
-            }
-            $uId = User::find()->select(['id'])->where(['rdSession'=>User::$_RD_SESSION])->scalar();
-            $joinUid = StoryReply::find()->select(['user_id'])->where(['story_id'=>$storyId])->orderBy(['create_at'=>SORT_DESC])->indexBy('user_id')->limit(10)->asArray()->all();
-            foreach ($joinUid as $key => $value){
-                if($value == $uId){
-                    unset($joinUid[$key]);
-                }
-            }
-            $userInfo = [];
-            if($joinUid){
-                $userInfo = User::find()->select(['avatarUrl'])->where(['in', 'id', array_keys($joinUid)])->asArray()->column();
-            }
-            BaseModule::success(200, $userInfo);
-        }catch (\Exception $ex){
-            BaseModule::error($ex->getCode(), $ex->getMessage());
-        }
-    }
 
     public function actionPublishRow()
     {
