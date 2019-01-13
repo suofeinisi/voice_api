@@ -52,9 +52,8 @@ class StoryController extends BaseController
     public function actionReply()
     {
         try{
-            $post = \Yii::$app->request->post();
-            $during = $post['during'] ?: 0;
-            $story_id = $post['storyId'] ?: 0;
+            $during = \Yii::$app->request->post('during', 0);
+            $story_id = \Yii::$app->request->post('storyId', 0);
             if(!$during || !$story_id){
                 throw new \Exception('', -1);
             }
