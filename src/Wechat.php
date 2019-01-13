@@ -32,11 +32,11 @@ class Wechat
 
     public static function setUserInfo($iv, $encryptData)
     {
-        $rd_session = \Yii::$app->request->post('rd_session');
-        if(!$rd_session || !$openid = \Yii::$app->redis->get($rd_session)){
+        $rdSession = \Yii::$app->request->headers->get('rdSession');
+        if(!$rdSession || !$openid = \Yii::$app->redis->get($rdSession)){
             return -2;
         }
-        if (!$session_data = @json_decode(\Yii::$app->redis->get($rd_session), true)) {
+        if (!$session_data = @json_decode(\Yii::$app->redis->get($rdSession), true)) {
             return 100002;
         }
         $decryptedData = \Yii::$app->wechat->miniProgram->encryptor->decryptData($session_data['session_key'], $iv, $encryptData);
@@ -50,8 +50,8 @@ class Wechat
             $userModel = new User();
         }
         $userModel->openid = $decryptedData['openId'];
-        $userModel->rd_session = $rd_session;
-        $userModel->nickname = $decryptedData['nickName'];
+        $userModel->rdSession = $rdSession;
+        $userModel->nickName = $decryptedData['nickName'];
         $userModel->gender = $decryptedData['gender'];
         $userModel->city = $decryptedData['city'];
         $userModel->province = $decryptedData['province'];

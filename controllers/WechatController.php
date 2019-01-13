@@ -40,12 +40,12 @@ class WechatController extends Controller
             if(isset($wxSession['errcode'])){
                 throw new \Exception($wxSession['errmsg'], $wxSession['errcode']);
             }
-            $rd_session = \Yii::$app->getSecurity()->generateRandomString(168);
-            \Yii::$app->redis->setex($rd_session, 3600*24*2, json_encode($wxSession));
-            if($old_session = User::find()->select(['rd_session'])->where(['openId'=>$wxSession['openid']])->scalar()){
-                \Yii::$app->redis->del($old_session);//删掉失效的rd_session
+            $rdSession = \Yii::$app->getSecurity()->generateRandomString(168);
+            \Yii::$app->redis->setex($rdSession, 3600*24*2, json_encode($wxSession));
+            if($old_session = User::find()->select(['rdSession'])->where(['openId'=>$wxSession['openid']])->scalar()){
+                \Yii::$app->redis->del($old_session);//删掉失效的rdSession
             }
-            BaseModule::success(200,['rd_session'=>$rd_session]);
+            BaseModule::success(200,['rdSession'=>$rdSession]);
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
