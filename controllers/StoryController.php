@@ -80,8 +80,11 @@ class StoryController extends BaseController
     {
         try{
             $uInfo = User::findByRdSession();
-            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id']])->orderBy(['create_at'=>SORT_DESC])->asArray()->all();
-            BaseModule::success(200,$storys);
+            $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'type'=>1])->orderBy(['create_at'=>SORT_DESC])->asArray()->all();
+            BaseModule::success(200,array_map(function ($row){
+                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                return $row;
+            }, $storys));
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
