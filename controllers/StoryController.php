@@ -40,7 +40,7 @@ class StoryController extends BaseController
                 $storyModel->entity = $name;
                 $storyModel->during = $during;
                 $storyModel->save();
-                BaseModule::success();
+                BaseModule::success(200, ['storyId'=>$storyModel->attributes['id']]);
             } else {
                 BaseModule::error();
             }
@@ -51,19 +51,26 @@ class StoryController extends BaseController
 
     public function actionReply()
     {
-        $post = \Yii::$app->request->post();
-        $during = $post['during'];
-        $story_id = $post['story_id'];
-        if ($name = UploadForm::upload()) {
-            $replayModel = new StoryReply();
-            $replayModel->user_id = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
-            $replayModel->story_id = $story_id;
-            $replayModel->entity = $name;
-            $replayModel->during = $during;
-            $replayModel->save();
-            BaseModule::success();
-        } else {
-            BaseModule::success();
+        try{
+            $post = \Yii::$app->request->post();
+            $during = $post['during'];
+            $story_id = $post['story_id'];
+            if(!$during || !$story_id){
+                throw new \Exception('', -1);
+            }
+            if ($name = UploadForm::upload()) {
+                $replayModel = new StoryReply();
+                $replayModel->user_id = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
+                $replayModel->story_id = $story_id;
+                $replayModel->entity = $name;
+                $replayModel->during = $during;
+                $replayModel->save();
+                BaseModule::success();
+            } else {
+                BaseModule::success();
+            }
+        }catch (\Exception $ex){
+            BaseModule::error($ex->getCode(), $ex->getMessage());
         }
     }
 
