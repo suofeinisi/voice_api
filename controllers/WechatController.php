@@ -45,7 +45,7 @@ class WechatController extends Controller
             if($old_session = User::find()->select(['rdSession'])->where(['openId'=>$wxSession['openid']])->scalar()){
                 \Yii::$app->redis->del($old_session);//删掉失效的rdSession
             }
-            BaseModule::success(200,['rdSession'=>$rdSession]);
+            BaseModule::success(['rdSession'=>$rdSession]);
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }

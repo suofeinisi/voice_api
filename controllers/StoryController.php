@@ -26,7 +26,7 @@ class StoryController extends BaseController
     public function actionTest()
     {
         BaseModule::error(0, "['aa'=>123,'bb'=>234]");
-        BaseModule::success(200, [
+        BaseModule::success([
             'aa'=>123,
             'bb'=>234,
         ]);
@@ -44,7 +44,7 @@ class StoryController extends BaseController
                 $storyModel->entity = $name;
                 $storyModel->during = $during;
                 $storyModel->save();
-                BaseModule::success(200, ['storyId'=>$storyModel->attributes['id']]);
+                BaseModule::success(['storyId'=>$storyModel->attributes['id']]);
             } else {
                 BaseModule::error();
             }
@@ -91,7 +91,7 @@ class StoryController extends BaseController
             $uInfo = User::findByRdSession();
             $storys = Story::find()->select(['id','create_at','type'])->where(['user_id'=>$uInfo['id'], 'status'=>1])
                 ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
-            BaseModule::success(200,array_map(function ($row){
+            BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
 //                $row['parter'] = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, -1);
@@ -112,7 +112,7 @@ class StoryController extends BaseController
             $storyids = \Yii::$app->redis->ZREVRANGE(self::$REDIS_USER_REPLY.':'.$uInfo['id'],$offset,$limit);
             $storys = $storyids ? Story::find()->select(['id','create_at','type'])->where(['and',['in','id',$storyids], ['status'=>1]])
                 ->orderBy(['create_at'=>SORT_DESC])->asArray()->all() : [];
-            BaseModule::success(200,array_map(function ($row){
+            BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
                 $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
@@ -136,7 +136,7 @@ class StoryController extends BaseController
                 $model = $model->where(['type'=>3,'status'=>1]);
             }
             $data = $model->asArray()->one();
-            BaseModule::success(200, $data);
+            BaseModule::success($data);
         }catch(\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }

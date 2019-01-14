@@ -18,10 +18,9 @@ class BaseModule extends \yii\base\Module
      * @param int $code
      * @return array
      */
-    public static function success($code = 200, $data = [])
+    public static function success($data = [], $code = 200)
     {
         self::repsJson($data, '', $code);
-//        return ['code'=>$code, 'data'=>$data];
     }
 
     /**
