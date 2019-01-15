@@ -122,23 +122,4 @@ class StoryController extends BaseController
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
     }
-
-
-    public function actionPublishRow()
-    {
-        try{
-            $post = \Yii::$app->request->post();
-            $story_id = $post['storyId'] ?: 0;
-            $model = Story::find()->select(['user_id','entity','during']);
-            if($story_id){
-                $model = $model->where(['id'=>$story_id, 'status'=>1]);
-            }else{
-                $model = $model->where(['type'=>3,'status'=>1]);
-            }
-            $data = $model->asArray()->one();
-            BaseModule::success($data);
-        }catch(\Exception $ex){
-            BaseModule::error($ex->getCode(), $ex->getMessage());
-        }
-    }
 }
