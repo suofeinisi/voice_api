@@ -154,7 +154,7 @@ class StoryController extends BaseController
     public function actionEntity()
     {
         try{
-            $entity = \Yii::$app->request->post('entity', '');
+            $entity = \Yii::$app->request->get('entity', '');
             if(!$entity || !UploadForm::checkEntity($entity)){
                 throw new \Exception('', -1);
             }
