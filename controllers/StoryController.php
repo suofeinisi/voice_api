@@ -135,12 +135,14 @@ class StoryController extends BaseController
             if(!$story_id){
                 throw new \Exception('', -1);
             }
-            $mainStory = Story::getDetailStoryById($story_id);
-            $replyStory = StoryReply::getDetailStoryById($story_id, $offset, $limit);
-            BaseModule::success([
-                'main' => $mainStory,
-                'reply' => $replyStory,
-            ]);
+            if($offset=0){//第一页,第一条是发布者
+                $mainStory = Story::getDetailStoryById($story_id);
+                $replyStory = StoryReply::getDetailStoryById($story_id, $offset, $limit-1);
+            }else{//只有回复
+                $mainStory = [];
+                $replyStory = StoryReply::getDetailStoryById($story_id, $offset-1, $limit);
+            }
+            BaseModule::success(array_merge($mainStory, $replyStory));
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
