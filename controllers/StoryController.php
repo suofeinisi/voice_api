@@ -135,7 +135,7 @@ class StoryController extends BaseController
             if(!$story_id){
                 throw new \Exception('', -1);
             }
-            if($offset=0){//第一页,第一条是发布者
+            if($offset==0){//第一页,第一条是发布者
                 $mainStory = Story::getDetailStoryById($story_id);
                 $replyStory = StoryReply::getDetailStoryById($story_id, $offset, $limit-1);
             }else{//只有回复
