@@ -28,9 +28,9 @@ class StoryReply extends BaseModel
             return false;
         }
 
-        $this->update_at = time();
+        $this->update_at = microtime(true)*1000;
         if($this->isNewRecord){
-            $this->create_at = time();
+            $this->create_at = microtime(true)*1000;
         }
         return true;
     }
