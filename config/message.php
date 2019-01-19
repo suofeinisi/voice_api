@@ -17,5 +17,7 @@ return [
 
     100001 => 'not wechat',
     100002 => 'rd session expired',
-    100003 => 'get wx user error'
+    100003 => 'get wx user error',
+
+    100101 => '故事非法或已删除',
 ];

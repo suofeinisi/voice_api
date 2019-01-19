@@ -35,10 +35,17 @@ class Story extends BaseModel
         return true;
     }
 
+    public static function getStatus($storyId)
+    {
+        return self::find()->select(['status'])->where(['id'=>$storyId])->scalar();
+    }
+
     public static function getDetailStoryById($storyId)
     {
         return self::find()->select(['nickName', 'avatarUrl', 'entity', 'during', self::tableName().'.create_at'])
             ->leftJoin(User::tableName() .' as u', 'u.id=story.user_id')
-            ->where(['story.id'=>$storyId])->asArray()->all();
+            ->where(['story.id'=>$storyId])
+            ->andWhere(['in', self::tableName().'.status', [1,2]])
+            ->asArray()->all();
     }
 }
