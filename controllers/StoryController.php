@@ -122,4 +122,19 @@ class StoryController extends BaseController
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
     }
+
+    public function actionDetail()
+    {
+        try{
+            $story_id = \Yii::$app->request->post('storyId', 0);
+            if(!$story_id){
+                throw new \Exception('', -1);
+            }
+            $mainStory = Story::getDetailStoryById($story_id);
+            $replyStory = StoryReply::getDetailStoryById($story_id);
+            BaseModule::success(array_merge($mainStory, $replyStory));
+        }catch (\Exception $ex){
+            BaseModule::error($ex->getCode(), $ex->getMessage());
+        }
+    }
 }

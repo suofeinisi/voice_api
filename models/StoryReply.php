@@ -34,4 +34,11 @@ class StoryReply extends BaseModel
         }
         return true;
     }
+
+    public static function getDetailStoryById($storyId)
+    {
+        return self::find()->select(['nickName', 'avatarUrl','during', 'create_at'])
+            ->leftJoin(User::tableName() .' as u', 'u.id=story_reply.user_id')
+            ->where(['story_reply.story_id'=>$storyId])->orderBy(['create_at'=>SORT_DESC])->asArray()->all();
+    }
 }
