@@ -37,7 +37,7 @@ class Story extends BaseModel
 
     public static function getDetailStoryById($storyId)
     {
-        return self::find()->select(['nickName', 'avatarUrl','during', 'create_at'])
+        return self::find()->select(['nickName', 'avatarUrl', 'entity', 'during', 'create_at'])
             ->leftJoin(User::tableName() .' as u', 'u.id=story.user_id')
             ->where(['story.id'=>$storyId])->asArray()->all();
     }

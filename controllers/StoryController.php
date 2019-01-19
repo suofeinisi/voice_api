@@ -123,6 +123,9 @@ class StoryController extends BaseController
         }
     }
 
+    /**
+     * 返回故事详细信息
+     */
     public function actionDetail()
     {
         try{
@@ -136,5 +139,10 @@ class StoryController extends BaseController
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }
+    }
+
+    public function actionEntity()
+    {
+        
     }
 }
