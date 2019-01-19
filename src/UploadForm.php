@@ -32,4 +32,43 @@ class UploadForm extends Model
             return false;
         }
     }
+
+    public static function checkEntity($entity)
+    {
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'].User::$_OPENID . '/';
+        if(is_file($target_path . $entity)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static function downEntity($entity)
+    {
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'].User::$_OPENID . '/';
+        $fp = fopen($target_path . $entity, 'rb');
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="'.$entity.'"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($target_path . $entity));
+
+        ob_clean();
+        ob_end_flush();
+        set_time_limit(0);
+
+        $chunkSize = 1024 * 1024;
+        while (!feof($fp)) {
+            $buffer = fread($fp, $chunkSize);
+            echo $buffer;
+            ob_flush();
+            flush();
+        }
+        fclose($fp);
+        exit;
+    }
 }
