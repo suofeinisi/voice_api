@@ -130,12 +130,17 @@ class StoryController extends BaseController
     {
         try{
             $story_id = \Yii::$app->request->post('storyId', 0);
+            $offset = \Yii::$app->request->post('offset', 0);
+            $limit = \Yii::$app->request->post('limit', 5);
             if(!$story_id){
                 throw new \Exception('', -1);
             }
             $mainStory = Story::getDetailStoryById($story_id);
-            $replyStory = StoryReply::getDetailStoryById($story_id);
-            BaseModule::success(array_merge($mainStory, $replyStory));
+            $replyStory = StoryReply::getDetailStoryById($story_id, $offset, $limit);
+            BaseModule::success([
+                'main' => $mainStory,
+                'reply' => $replyStory,
+            ]);
         }catch (\Exception $ex){
             BaseModule::error($ex->getCode(), $ex->getMessage());
         }

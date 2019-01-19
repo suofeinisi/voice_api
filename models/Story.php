@@ -39,6 +39,6 @@ class Story extends BaseModel
     {
         return self::find()->select(['nickName', 'avatarUrl', 'entity', 'during', self::tableName().'.create_at'])
             ->leftJoin(User::tableName() .' as u', 'u.id=story.user_id')
-            ->where(['story.id'=>$storyId])->asArray()->all();
+            ->where(['story.id'=>$storyId])->asArray()->one();
     }
 }
