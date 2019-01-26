@@ -94,7 +94,7 @@ class StoryController extends BaseController
                 ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
-                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                $row['create_at'] = date('Y/m/d H:i:s', (int)($row['create_at']/1000));
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
             }, $storys));
@@ -114,7 +114,7 @@ class StoryController extends BaseController
                 ->orderBy(['create_at'=>SORT_DESC])->asArray()->all() : [];
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
-                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                $row['create_at'] = date('Y/m/d H:i:s', (int)($row['create_at']/1000));
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
             }, $storys));
