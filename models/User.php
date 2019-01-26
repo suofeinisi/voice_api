@@ -7,6 +7,7 @@ use yii\db\ActiveRecord;
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
 
+    public static $id = null;
     public static $_RD_SESSION = null;
     public static $_OPENID = null;
 

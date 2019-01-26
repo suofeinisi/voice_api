@@ -41,7 +41,7 @@ class Story extends BaseModel
 
     public static function getDetailStoryById($storyId)
     {
-        return self::find()->select(['nickName', 'avatarUrl', 'entity', 'during', self::tableName().'.create_at'])
+        return self::find()->select(['nickName', 'user_id', 'avatarUrl', 'entity', 'during', self::tableName().'.create_at'])
             ->leftJoin(User::tableName() .' as u', 'u.id=story.user_id')
             ->where(['story.id'=>$storyId])
             ->andWhere(['in', self::tableName().'.status', [1,2]])

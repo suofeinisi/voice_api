@@ -33,9 +33,11 @@ class UploadForm extends Model
         }
     }
 
-    public static function checkEntity($entity)
+    public static function checkEntity($entity, $uid)
     {
         $target_path = \Yii::$app->params['AAC_PATH_PRE'].User::$_OPENID . '/';
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'].
+            User::find()->select(['openid'])->where(['id'=>$uid])->scalar() . '/';
         if(is_file($target_path . $entity)){
             return true;
         }else{
@@ -43,9 +45,10 @@ class UploadForm extends Model
         }
     }
 
-    public static function downEntity($entity)
+    public static function downEntity($entity, $uid)
     {
-        $target_path = \Yii::$app->params['AAC_PATH_PRE'].User::$_OPENID . '/';
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'].
+            User::find()->select(['openid'])->where(['id'=>$uid])->scalar() . '/';
         $fp = fopen($target_path . $entity, 'rb');
 
         header('Content-Description: File Transfer');
