@@ -10,4 +10,8 @@ return [
         'REDIS_PUBLISH_PATER' => 'REDIS_PUBLISH_PATER',
         'REDIS_USER_REPLY' => 'REDIS_USER_REPLY',
     ],
+    'noAuth' => [
+        'story/detail',
+        'story/entity',
+    ],
 ];
