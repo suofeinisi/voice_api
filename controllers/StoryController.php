@@ -122,7 +122,7 @@ class StoryController extends BaseController
             $uInfo = User::findByRdSession();
             $storyids = \Yii::$app->redis->ZREVRANGE(self::$REDIS_USER_REPLY.':'.$uInfo['id'],$offset,$limit);
             $storys = $storyids ? Story::find()->select(['id','created_at','type', 'status'])->where(['and',['in','id',$storyids], ['status'=>1]])
-                ->orderBy(['create_at'=>SORT_DESC])->asArray()->all() : [];
+                ->orderBy(['created_at'=>SORT_DESC])->asArray()->all() : [];
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
                 $row['created_at'] = date('Y/m/d H:i:s', $row['created_at']);
