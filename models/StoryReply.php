@@ -28,20 +28,20 @@ class StoryReply extends BaseModel
             return false;
         }
 
-        $this->update_at = time();
+        $this->updated_at = time();
         if($this->isNewRecord){
-            $this->create_at = time();
+            $this->created_at = time();
         }
         return true;
     }
 
     public static function getDetailStoryById($storyId, $offset, $limit)
     {
-        return self::find()->select(['nickName','user_id', 'avatarUrl', 'entity', 'during', self::tableName().'.create_at'])
+        return self::find()->select(['nickName','user_id', 'avatarUrl', 'entity', 'during', self::tableName().'.created_at'])
             ->leftJoin(User::tableName() .' as u', 'u.id=story_reply.user_id')
             ->where(['story_reply.story_id'=>$storyId])
             ->andWhere(['in', self::tableName().'.status', [1,2]])
-            ->orderBy([self::tableName().'.create_at'=>SORT_ASC])
+            ->orderBy([self::tableName().'.created_at'=>SORT_ASC])
             ->offset($offset)->limit($limit)
             ->asArray()->all();
     }
