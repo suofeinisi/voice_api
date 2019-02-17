@@ -27,9 +27,9 @@ class Story extends BaseModel
         if(!parent::beforeSave($insert)){
             return false;
         }
-        $this->update_at = round(microtime(true), 3)*1000;
+        $this->update_at = time();
         if($this->isNewRecord){
-            $this->create_at = round(microtime(true), 3)*1000;
+            $this->create_at = time();
         }
         return true;
     }

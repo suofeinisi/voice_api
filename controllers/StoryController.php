@@ -58,6 +58,7 @@ class StoryController extends BaseController
         try{
             $during = \Yii::$app->request->post('during', 0);
             $story_id = \Yii::$app->request->post('storyId', 0);
+            file_put_contents('/tmp/voice.log', $story_id . "\n", FILE_APPEND);
             if(!$during || !$story_id){
                 throw new \Exception('', -1);
             }
@@ -94,7 +95,7 @@ class StoryController extends BaseController
                 ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
-                $row['create_at'] = date('Y/m/d H:i:s', (int)($row['create_at']/1000));
+                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
             }, $storys));
@@ -114,7 +115,7 @@ class StoryController extends BaseController
                 ->orderBy(['create_at'=>SORT_DESC])->asArray()->all() : [];
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
-                $row['create_at'] = date('Y/m/d H:i:s', (int)($row['create_at']/1000));
+                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
             }, $storys));
