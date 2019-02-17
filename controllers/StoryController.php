@@ -99,12 +99,12 @@ class StoryController extends BaseController
             $offset = \Yii::$app->request->post('offset', 0);
             $limit = \Yii::$app->request->post('limit', 5);
             $uInfo = User::findByRdSession();
-            $storys = Story::find()->select(['id', 'create_at', 'type', 'status'])->where(['user_id' => $uInfo['id']])
+            $storys = Story::find()->select(['id', 'created_at', 'type', 'status'])->where(['user_id' => $uInfo['id']])
                 ->andWhere(['in', 'status', [1, 2]])
-                ->orderBy(['create_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
+                ->orderBy(['created_at'=>SORT_DESC])->offset($offset)->limit($limit)->asArray()->all();
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
-                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                $row['created_at'] = date('Y/m/d H:i:s', $row['created_at']);
 
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
@@ -121,11 +121,11 @@ class StoryController extends BaseController
             $limit = \Yii::$app->request->post('limit', 5);
             $uInfo = User::findByRdSession();
             $storyids = \Yii::$app->redis->ZREVRANGE(self::$REDIS_USER_REPLY.':'.$uInfo['id'],$offset,$limit);
-            $storys = $storyids ? Story::find()->select(['id','create_at','type', 'status'])->where(['and',['in','id',$storyids], ['status'=>1]])
+            $storys = $storyids ? Story::find()->select(['id','created_at','type', 'status'])->where(['and',['in','id',$storyids], ['status'=>1]])
                 ->orderBy(['create_at'=>SORT_DESC])->asArray()->all() : [];
             BaseModule::success(array_map(function ($row){
                 $pater = \Yii::$app->redis->ZREVRANGE(self::$REDIS_PUBLISH_PATER.':'.$row['id'], 0, 9);
-                $row['create_at'] = date('Y/m/d H:i:s', $row['create_at']);
+                $row['created_at'] = date('Y/m/d H:i:s', $row['created_at']);
 
                 $row['parter'] = $pater ? User::find()->select(['avatarUrl'])->where(['in', 'id', $pater])->column() : [];
                 return $row;
