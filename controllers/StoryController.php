@@ -39,7 +39,8 @@ class StoryController extends BaseController
             $post = \Yii::$app->request->post();
             $during = $post['during'];
             $fileInfo = $_FILES['aac'];
-            $filename = md5($fileInfo['name']). '.'.User::$id .'.' . pathinfo($fileInfo['name'])['extension'];
+//            $filename = md5($fileInfo['name']). '.'.User::$id .'.' . pathinfo($fileInfo['name'])['extension'];
+            $filename = md5($fileInfo['name']). '.'.User::$id .'.mp4';
             if ($name = UploadForm::upload($filename)) {
                 $storyModel = new Story();
                 $storyModel->user_id = User::$id;
@@ -68,7 +69,8 @@ class StoryController extends BaseController
                 throw new \Exception('', -1);
             }
             $fileInfo = $_FILES['aac'];
-            $filename = md5($fileInfo['name']). '.'.User::$id .'.' . pathinfo($fileInfo['name'])['extension'];
+//            $filename = md5($fileInfo['name']). '.'.User::$id .'.' . pathinfo($fileInfo['name'])['extension'];
+            $filename = md5($fileInfo['name']). '.'.User::$id .'.mp4';
             if ($name = UploadForm::upload($filename)) {
                 $uid = User::find()->select(['id'])->where(['openid' => User::$_OPENID])->scalar();
                 $replayModel = new StoryReply();
