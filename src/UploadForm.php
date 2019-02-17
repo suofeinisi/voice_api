@@ -16,11 +16,11 @@ class UploadForm extends Model
 {
     public $file;
 
-    public static function upload()
+    public static function upload($filename = '')
     {
         $fileInfo = $_FILES['aac'];
-        $name = $fileInfo['name'];
-        $target_path = \Yii::$app->params['AAC_PATH_PRE'].User::$_OPENID . '/';
+        $name = $filename ? $filename : md5($fileInfo['name']) . pathinfo($fileInfo['name'])['extension'];
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'] . '/';
         if(!is_dir($target_path)){
             mkdir($target_path, 0777, true);
         }
@@ -33,11 +33,9 @@ class UploadForm extends Model
         }
     }
 
-    public static function checkEntity($entity, $uid)
+    public static function checkEntity($entity)
     {
-        $target_path = \Yii::$app->params['AAC_PATH_PRE'].User::$_OPENID . '/';
-        $target_path = \Yii::$app->params['AAC_PATH_PRE'].
-            User::find()->select(['openid'])->where(['id'=>$uid])->scalar() . '/';
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'] . '/';
         if(is_file($target_path . $entity)){
             return true;
         }else{
@@ -45,10 +43,9 @@ class UploadForm extends Model
         }
     }
 
-    public static function downEntity($entity, $uid)
+    public static function downEntity($entity)
     {
-        $target_path = \Yii::$app->params['AAC_PATH_PRE'].
-            User::find()->select(['openid'])->where(['id'=>$uid])->scalar() . '/';
+        $target_path = \Yii::$app->params['AAC_PATH_PRE'] . '/';
         $fp = fopen($target_path . $entity, 'rb');
 
         header('Content-Description: File Transfer');
